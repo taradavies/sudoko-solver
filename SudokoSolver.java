@@ -1,31 +1,37 @@
+import java.awt.Point;
 
 public class SudokoSolver {
+	SudokoBoard board;
+	int boardSize;
 	
-	SudokoBoard b;
-	
-	public SudokoSolver(SudokoBoard b) {
-		this.b = b;
+	public SudokoSolver(SudokoBoard board) {
+		this.board = board;
 	}
 	
+	// public boolean solve() {
+	// 	// board is full can't find empty
+	// 	if (!board.wasFoundEmpty()) {
+	// 		return true;
+	// 	}
+	// 	// we should count it form 0 better
+	// 	// you should get used to it
+	// 	for (int x = FIRST_INDEX; x <= BOARD_SIZE; x++) {
+	// 		if (board.isValid(x)) {
+				
+	// 			board.getPuzzle()[board.getColumnPos()][board.getRowPos()] = x;
+				
+	// 			if (solve()) 
+	// 				return true;
+	// 			else 
+	// 				board.getPuzzle()[board.getColumnPos()][board.getRowPos()] = 0;	
+	// 		}
+	// 		return false;
+	// 	}
+	// 	return true;
+	// }
+	
 	public boolean solve() {
-		// board is full can't find empty
-		if (!b.findEmpty()) {
-			return true;
-		}
-		
-		for (int x = 1; x <= 9; x++) {
-			if (b.isValid(x)) {
-				
-				b.getPuzzle()[b.getColPos()][b.getRowPos()] = x;
-				
-				if (solve()) 
-					return true;
-				else 
-					b.getPuzzle()[b.getColPos()][b.getRowPos()] = 0;	
-			}
-			return false;
-		}
-		return true;
+		return false;
 	}
 	
 }

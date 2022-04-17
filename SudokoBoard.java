@@ -1,64 +1,66 @@
+import java.awt.Point;
 
 public class SudokoBoard {
+	public static final int BOARD_SIZE = 9;
+	private static final int EMPTY_CHAR = 0;
 	
-	private int rowPos;
-	private int colPos;
-	
-	private int[][] puzzle = {
-			{5, 3, 0, 0, 7, 0, 0, 0, 0}, 
-			{6, 0, 0, 1, 9, 5, 0, 0, 0},
-			{0, 9, 8, 0, 0, 0, 0, 6, 0},
-			{8, 0, 0, 0, 6, 0, 0, 0, 3},
-			{4, 0, 0, 8, 0, 3, 0, 0, 1},
-			{7, 0, 0, 0, 2, 0, 0, 0, 6},
-			{0, 6, 0, 0, 0, 0, 2, 8, 0},
-			{0, 0, 0, 4, 1, 9, 0, 0, 5},
-			{0, 0, 0, 0, 8, 0, 0, 7, 9},
-	};
-	
-	/*\
-	 * Answer:
-	     	{5, 3, 4, 6, 7, 8, 9, 1, 2}, 
-			{6, 7, 2, 1, 9, 5, 3, 4, 8},
-			{1, 9, 8, 3, 4, 2, 5, 6, 7},
-			{8, 5, 9, 7, 6, 1, 4, 2, 3},
-			{4, 2, 6, 8, 5, 3, 7, 9, 1},
-			{7, 1, 3, 9, 2, 4, 8, 5, 6},
-			{9, 6, 1, 5, 3, 7, 2, 8, 4},
-			{2, 8, 7, 4, 1, 9, 6, 3, 5},
-			{3, 4, 5, 2, 8, 6, 1, 7, 9},
-	  
-	*/
+	// we can use something like Point.
+	// where x = row; y = column :). Or you can create own object
+	// it will easier to return in method current position
+	// private int rowPos;
+	// private int colPos;
+
+	Point currentPosition = new Point();
+	int[][] puzzles;
+
+	public SudokoBoard(int[][] puzzles) {
+		this.puzzles = puzzles;
+	}
 	
 	public void printBoard() {
-		for (int cols = 0; cols < puzzle.length; cols++) {
+		for (int column = 0; column < puzzles.length; column++) {
 			
-			if (cols % 3 == 0 && cols != 0) {
+			if (column % 3 == 0 && column != 0) {
 				System.out.println(" - - - - - - - - - - - - ");
 			}
 			
-			for (int rows = 0; rows < puzzle[0].length; rows++) {
+			for (int row = 0; row < puzzles[0].length; row++) {
 				
-				if (rows % 3 == 0) {
+				if (row % 3 == 0) {
 					System.out.print("| ");
 				}
 				
-				if (rows == 8) {
-					System.out.println(puzzle[cols][rows]);
+				if (row == 8) {
+					System.out.println(puzzles[column][row]);
 				}
 				else {
-					System.out.print(puzzle[cols][rows] + " ");
+					System.out.print(puzzles[column][row] + " ");
 				}
 			}
 		}
 	}
 	
-	public boolean findEmpty() {
-		for (int cols = 0; cols < puzzle.length; cols ++) {
-			for (int rows = 0; rows < puzzle[0].length; rows++) {
-				if (puzzle[cols][rows] == 0) {
-					rowPos = rows;
-					colPos = cols;
+	// for example here you can return position Point(row, column) where you found empty char
+	public Point foundEmpty() {
+		for (int column = 0; column < puzzles.length; column++) {
+			for (int row = 0; row < puzzles[column].length; row++) {
+				if (puzzles[column][row] == EMPTY_CHAR) {
+					return new Point(row, column);
+				}
+			}
+		}
+		/* 
+		another solution to use modern way "Optional"
+		when you didn't find point return nil
+		when you found point return Point in for
+		*/
+		return new Point();
+	}
+
+	public boolean wasFoundEmpty() {
+		for (int column = 0; column < puzzles.length; column++) {
+			for (int row = 0; row < puzzles[column].length; row++) {
+				if (puzzles[column][row] == EMPTY_CHAR) {
 					return true;
 				}
 			}
@@ -68,14 +70,14 @@ public class SudokoBoard {
 	
 	public boolean isValid(int num) {
 		
-		if (!findEmpty() ) {
+		if (!wasFoundEmpty() ) {
 			return false;
 		}
 		
-		int[] posArr = {colPos, rowPos};
+		int[] posArr = {currentPosition.x, currentPosition.y};
 		
-		// posArr[0] --> cols
-		// posArr[1] --> rows
+		// posArr[0] --> column
+		// posArr[1] --> row
 		
 		if (checkRows(num, posArr) && checkColumns(num, posArr) && checkBox(num, posArr))
 			return true;
@@ -83,10 +85,10 @@ public class SudokoBoard {
 	}
 	
 	private boolean checkRows(int num, int[] posArr) {
-		for (int i = 0;  i < puzzle[0].length; i++) {
+		for (int i = 0;  i < puzzles[0].length; i++) {
 			// pos[0] != i means that we're looking for if the number is in the row
 			// but not the number we just inserted
-			if (puzzle[posArr[1]][i] == num && posArr[0] != i) 
+			if (puzzles[posArr[1]][i] == num && posArr[0] != i) 
 				return false;
 		}
 		return true;
@@ -94,8 +96,8 @@ public class SudokoBoard {
 	
 	
 	private boolean checkColumns(int num, int[] posArr) {
-		for (int j = 0; j < puzzle.length; j++) {
-			if (puzzle[j][posArr[0]] == num && posArr[1] != j) 
+		for (int j = 0; j < puzzles.length; j++) {
+			if (puzzles[j][posArr[0]] == num && posArr[1] != j) 
 				return false;
 		}
 		return true;
@@ -106,9 +108,9 @@ public class SudokoBoard {
 		int boxRow = posArr[1] / 3;
 		int boxColumn = posArr[0] / 3;
 		
-		for (int cols = boxColumn * 3; cols < boxColumn*3 + 3; cols++) {
-			for (int rows = boxRow * 3; rows < boxRow*3 + 3; rows++) {
-				if (puzzle[cols][rows] == num) {
+		for (int column = boxColumn * 3; column < boxColumn*3 + 3; column++) {
+			for (int row = boxRow * 3; row < boxRow*3 + 3; row++) {
+				if (puzzles[column][row] == num) {
 					return false;
 				}
 			}
@@ -116,16 +118,16 @@ public class SudokoBoard {
 		return true;
 	}
 
-	public int getColPos() {
-		return colPos;
+	public int getColumnPos() {
+		return currentPosition.x;
 	}
 	
 	public int getRowPos() {
-		return colPos;
+		return currentPosition.y;
 	}
 	
 	public int[][] getPuzzle() {
-		return puzzle;
+		return puzzles;
 	}
 	
 }
